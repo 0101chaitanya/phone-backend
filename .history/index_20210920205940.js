@@ -1,7 +1,6 @@
 const express = require('express');
 let persons = require('./db');
 const morgan = require('morgan');
-const path = require('path');
 const app = express();
 const cors = require('cors');
 app.use(cors())
@@ -13,7 +12,7 @@ morgan.token("body", function getBody(req) {
 })
 app.use(morgan('tiny'));
 app.use(morgan(':body'));
-app.use(express.static(path.join(__dirname, 'build')));
+
 app.get("/api/persons", (req, res) => {
     res.json(persons);
 })
