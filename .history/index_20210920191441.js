@@ -1,5 +1,5 @@
 const express = require('express');
-let persons = require('./db');
+const persons = require('./db');
 const morgan = require('morgan');
 const app = express();
 

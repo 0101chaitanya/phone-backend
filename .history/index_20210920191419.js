@@ -1,12 +1,12 @@
 const express = require('express');
-let persons = require('./db');
+const persons = require('./db');
 const morgan = require('morgan');
 const app = express();
 
 app.use(express.json());
 
 morgan.token("body", function getBody(req) {
-    return JSON.stringify(req.body)
+    return req.body.json()
 })
 app.use(morgan('tiny'));
 app.use(morgan(':body'));

@@ -1,16 +1,12 @@
 const express = require('express');
-let persons = require('./db');
-const morgan = require('morgan');
+const persons = require('./db');
 const app = express();
 
+
+
+
+
 app.use(express.json());
-
-morgan.token("body", function getBody(req) {
-    return JSON.stringify(req.body)
-})
-app.use(morgan('tiny'));
-app.use(morgan(':body'));
-
 app.get("/api/persons", (req, res) => {
     res.json(persons);
 })
@@ -36,21 +32,30 @@ app.delete("/api/persons/:id", (req, res) => {
 const assignId = () => Math.floor(Math.random() * 100000);
 
 app.post("/api/persons", (request, response) => {
+
     if (!request.body.name && !request.body.number) {
+
         return res.status(400).send("Body has to include a valid name and number");
     }
+
+
     const sum = persons.some(person => person.name === request.body.name);
+
     if (sum) {
+
         console.log("i exist")
         return response.json({
             error: "name must be unique",
         });
+
+
     } else {
         const newPerson = {
             id: assignId(),
             name: request.body.name,
             number: request.body.number
         }
+
         persons = persons.concat(newPerson);
         response.json(persons);
     }
