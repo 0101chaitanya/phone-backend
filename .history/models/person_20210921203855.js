@@ -18,13 +18,11 @@ const personSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
-        unique: true,
         minLength: 5,
     },
     number: {
         type: String,
         required: true,
-        minLength: 9
     }
 });
 

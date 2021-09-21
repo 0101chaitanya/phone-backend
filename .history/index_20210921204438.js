@@ -40,7 +40,7 @@ app.get("/api/persons/:id", (req, res, next) => {
 
             res.send(person);
         } else {
-            res.status(400).end({ error: "Person does't exist" });
+            res.status(404).end();
         }
 
     }).catch(e => next(err));

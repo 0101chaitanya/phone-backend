@@ -8,6 +8,7 @@ app.use(cors());
 const mongoose = require('mongoose');
 require('dotenv').config();
 const Person = require('./models/person');
+const { nextTick } = require('process');
 app.use(express.json());
 
 
@@ -20,7 +21,7 @@ app.use(morgan(':body'));
 app.get("/api/persons", (req, res) => {
     Person.find({}).then((persons) => {
         res.send(persons)
-    }).catch((err) => next(err));
+    })
 })
 app.get("/info", (req, res) => {
 
@@ -40,7 +41,7 @@ app.get("/api/persons/:id", (req, res, next) => {
 
             res.send(person);
         } else {
-            res.status(400).end({ error: "Person does't exist" });
+            res.status(404).end();
         }
 
     }).catch(e => next(err));
@@ -64,18 +65,18 @@ app.put("/api/persons/:id", (req, res, next) => {
 })
 
 
-app.delete("/api/persons/:id", (req, res, next) => {
+app.delete("/api/persons/:id", (req, res) => {
     const id = req.params.id;
     Person.findByIdAndRemove(id).then((data) => {
         res.status(204).end()
-    }).catch(err => next(err));
+    }).catch(err => nextTick(err));
 
 })
 
 
-app.post("/api/persons", (request, response, next) => {
+app.post("/api/persons", (request, response) => {
     if (!request.body.name && !request.body.number) {
-        return res.status(400).json({ error: "Body has to include a valid name and number" });
+        return res.status(400).send("Body has to include a valid name and number");
     }
     const newPerson = new Person({
         name: request.body.name,
@@ -85,7 +86,7 @@ app.post("/api/persons", (request, response, next) => {
     newPerson.save().then((person) => {
 
         response.json(person);
-    }).catch(err => next(err));
+    })
 
 })
 
@@ -99,8 +100,6 @@ const errorHandler = (err, req, res, next) => {
     console.log(err.message);
     if (err.name === "castError") {
         return res.status(400).json({ error: "malformed id" });
-    } else if (err.name === "ValidationError") {
-        return res.status(400).json({ error: err.message });
     }
     next(err);
 }

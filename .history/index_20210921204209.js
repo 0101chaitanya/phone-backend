@@ -8,6 +8,7 @@ app.use(cors());
 const mongoose = require('mongoose');
 require('dotenv').config();
 const Person = require('./models/person');
+const { nextTick } = require('process');
 app.use(express.json());
 
 
@@ -40,7 +41,7 @@ app.get("/api/persons/:id", (req, res, next) => {
 
             res.send(person);
         } else {
-            res.status(400).end({ error: "Person does't exist" });
+            res.status(404).end();
         }
 
     }).catch(e => next(err));
@@ -64,11 +65,11 @@ app.put("/api/persons/:id", (req, res, next) => {
 })
 
 
-app.delete("/api/persons/:id", (req, res, next) => {
+app.delete("/api/persons/:id", (req, res) => {
     const id = req.params.id;
     Person.findByIdAndRemove(id).then((data) => {
         res.status(204).end()
-    }).catch(err => next(err));
+    }).catch(err => nextTick(err));
 
 })
 
@@ -99,8 +100,6 @@ const errorHandler = (err, req, res, next) => {
     console.log(err.message);
     if (err.name === "castError") {
         return res.status(400).json({ error: "malformed id" });
-    } else if (err.name === "ValidationError") {
-        return res.status(400).json({ error: err.message });
     }
     next(err);
 }
