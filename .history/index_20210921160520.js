@@ -8,7 +8,6 @@ app.use(cors());
 const mongoose = require('mongoose');
 require('dotenv').config();
 const Person = require('./models/person');
-const { nextTick } = require('process');
 app.use(express.json());
 
 
@@ -44,32 +43,18 @@ app.get("/api/persons/:id", (req, res) => {
             res.status(404).end();
         }
 
-    }).then(e => nextTick(err));
+    }).then(e => {
+
+        console.log(e);
+        res.status(400).send({ error: "malformed id" });
+    });
 
 })
-
-app.put("/api/persons/:id", (req, res, next) => {
-
-    const body = req.body;
-
-    const person = {
-        name: body.name,
-        number: body.number,
-    }
-
-    Person.findByIdAndUpdate(req.params.id, person, { new: true }).then((updatedPerson) => {
-        res.send(updatedPerson);
-
-
-    }).catch((err) => next(err));
-})
-
-
 app.delete("/api/persons/:id", (req, res) => {
     const id = req.params.id;
-    Person.findByIdAndRemove(id).then((data) => {
+    Person.findByIdAndDelete(id).then((data) => {
         res.status(204).end()
-    }).catch(err => nextTick(err));
+    });
 
 })
 
@@ -95,16 +80,6 @@ const unKnownEndpoint = (req, res) => {
     res.status(404).send({ error: "unknown endpoint" });
 }
 app.use(unKnownEndpoint);
-
-
-const errorHandler = (err, req, res, next) => {
-    console.log(err.message);
-    if (err.name === "castError") {
-        return res.status(400).json({ error: "malformed id" });
-    }
-    next(err);
-}
-app.use(errorHandler);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {

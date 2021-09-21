@@ -61,7 +61,7 @@ app.put("/api/persons/:id", (req, res, next) => {
         res.send(updatedPerson);
 
 
-    }).catch((err) => next(err));
+    });
 })
 
 

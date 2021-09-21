@@ -6,14 +6,13 @@
     "scripts": {
         "start": "node index.js",
         "dev": "nodemon index.js",
-        "db": "node mongo.js"
+        "db": "node mongo.js Webdev%400101"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "dependencies": {
         "cors": "^2.8.5",
-        "dotenv": "^10.0.0",
         "express": "^4.17.1",
         "mongoose": "^6.0.7",
         "morgan": "^1.10.0"
